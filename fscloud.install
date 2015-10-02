@@ -1,0 +1,47 @@
+<?php
+/**
+* realisation hook_uninstall().
+**/ 
+
+
+function fscloud_schema(){
+	$schema['fscloud_setting'] = array(
+			'fields'	=>array(
+			'id'			=> array('type' => 'serial', 'size' => 'normal', 'not_null' => TRUE ),
+			'email_admin'	=> array('type'	=> 'varchar', 'length'	=> 255, 'not_null' => TRUE),
+			'token'			=> array('type'	=> 'varchar', 'length' =>255, 'not_null' => TRUE),
+			'created_at'	=> array('type' => 'int', 'not null' => TRUE),
+			'updated_at'	=> array('type' => 'int', 'not null' => TRUE),
+			),
+			'unique keys' => array('id' => array('id')),
+			'primary_key' => array('id'),
+		);
+
+	$schema['fscloud_messages'] = array(
+			'fields'	=>array(
+			'id'			=> array('type' => 'serial', 'size' => 'normal', 'not_null' => TRUE ),
+			'name'			=> array('type' => 'varchar', 'length' => 255, 'not_null' => TRUE),
+			'email'			=> array('type'	=> 'varchar', 'length'	=> 255, 'not_null' => TRUE),
+			'message'		=> array('type'	=> 'text', 'not_null' => TRUE),
+			'created_at'	=> array('type' => 'int', 'not null' => TRUE),
+			'updated_at'	=> array('type' => 'int', 'not null' => TRUE),
+			),
+			'unique keys' => array('id' => array('id')),
+			'primary_key' => array('id'),
+		);
+	return $schema;
+}
+
+
+// function fscloud_install(){
+// 	drupal_install_schema('fscloud');
+// }
+
+function fscloud_uninstall(){
+	cache_clear_all('fscloud_setting', 'cache', true);
+	cache_clear_all('fscloud_messages', 'cache', true);
+	drupal_uninstall_schema('fscloud_setting');
+	drupal_uninstall_schema('fscloud_messages');
+	menu_rebuild();
+	// variable_del('ed');
+}

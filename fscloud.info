@@ -1,0 +1,7 @@
+name = FSCloud
+description = Useful module for upload file in custom form to your cloud
+version = 7.x-1.x-dev
+core = 7.x
+package = Other
+configure = admin/config/content/fscloud
+dependencies[] = xautoload

@@ -1,0 +1,180 @@
+# Russian translation of Drupal core (7.xx)
+# Copyright (c) 2015 by the Russian translation team
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Drupal core (7.xx)\n"
+"POT-Creation-Date: 2015-06-08 02:03+0000\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Language-Team: Ukraine\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=((((n%10)==1)&&((n%100)!=11))?(0):(((((n%10)>=2)&&((n%10)<=4))&&(((n%100)<10)||((n%100)>=20)))?(1):2));\n"
+
+#: Comment_notify.module: 485
+msgid "All Message"
+msgstr "Всі повідомлення"
+
+#: Comment_notify.module: 485
+msgid "FSCloud setting"
+msgstr "Налаштування модуля"
+
+#: Comment_notify.module: 485
+msgid "Edit token setting"
+msgstr "Редагувати токен для модуля"
+
+#: Comment_notify.module: 485
+msgid "Delete message"
+msgstr "Видалити повідомлення"
+
+#: Comment_notify.module: 485
+msgid "FSCloud content"
+msgstr "Повідомлень"
+
+#: Comment_notify.module: 485
+msgid "Email for sending notifications after receiving reports"
+msgstr "Email для відправки повідомлень після отриманих повідомлень"
+
+#: Comment_notify.module: 485
+msgid "Enter the token for the application in Yandex Disk"
+msgstr "Введіть токен для докладання в Yandex Disk"
+
+#: Comment_notify.module: 485
+msgid "To get a token, you must register the application in Yandex API"
+msgstr "Щоб отримати токен потрібно зареєструвати додаток в Yandex API"
+
+#: Comment_notify.module: 485
+msgid "Email for messages added"
+msgstr "Email для повідомлень додано"
+
+#: Comment_notify.module: 485
+msgid "Your name and surname"
+msgstr "Ваше ім'я та прізвище"
+
+#: Comment_notify.module: 512
+msgid "Your email"
+msgstr "Ваш email"
+
+#: Comment_notify.module: 512
+msgid "Mobile phone number"
+msgstr "Мобільний номер телефону"
+
+#: Comment_notify.module: 512
+msgid "Type of work"
+msgstr "Вид роботи"
+
+#: Comment_notify.module: 512
+msgid "Theme (Optional)"
+msgstr "Тема (за потребою)"
+
+#: Comment_notify.module: 512
+msgid "Discipline"
+msgstr "Дисципліна"
+
+#: Comment_notify.module: 512
+msgid "Work plan"
+msgstr "План роботи"
+
+#: Comment_notify.module: 512
+msgid "Available"
+msgstr "Доступний"
+
+#: Comment_notify.module: 512
+msgid "No and does not require approval"
+msgstr "Немає і не вимагає схвалення"
+
+#: Comment_notify.module: 512
+msgid "No and require approval"
+msgstr "Немає і вимагає схвалення"
+
+#: Comment_notify.module: 512
+msgid "Additional Information"
+msgstr "Додаткова інформація"
+
+#: Comment_notify.module: 512
+msgid "(plan, execution, requirements)"
+msgstr "(план, оформлення, вимоги)"
+
+msgid "Dissertations"
+msgstr "Дипломна"
+
+#: Comment_notify.module: 512
+msgid "Coursework"
+msgstr "Курсові"
+
+#: Comment_notify.module: 512
+msgid "Abstracts"
+msgstr "Реферати"
+
+#: Comment_notify.module: 512
+msgid "Tests"
+msgstr "Тести"
+
+#: Comment_notify.module: 512
+msgid "Practice reports"
+msgstr "Звіти по практиці"
+
+#: Comment_notify.module: 512
+msgid "Tasks"
+msgstr "Завдання"
+
+#: Comment_notify.module: 512
+msgid "Essays"
+msgstr "Есе"
+
+#: Comment_notify.module: 512
+msgid "Articles"
+msgstr "Статті"
+
+#: Comment_notify.module: 512
+msgid "For job rule"
+msgstr "Вимоги до оформлення роботи"
+
+#: Comment_notify.module: 512
+msgid "Customer guidance"
+msgstr "Методичні рекомендації клієнта"
+
+#: Comment_notify.module: 512
+msgid "Overall (for the method. Recom. artist)"
+msgstr "Загальні (за метод. реком. виконавця)"
+
+#: Comment_notify.module: 512
+msgid "Special customer requirements"
+msgstr "Особливі вимоги клієнта"
+
+#: Comment_notify.module: 512
+msgid "Additional Information"
+msgstr "Додаткова інформація"
+
+#: Comment_notify.module: 512
+msgid "(plan, execution, requirements)"
+msgstr "(план, оформлення, вимоги)"
+
+#: Comment_notify.module: 512
+msgid "The data on which option is selected"
+msgstr "Дані за якими обирається варіант"
+
+#: Comment_notify.module: 512
+msgid "(№№ zachetki / option / on the list in the magazine / first letter of last name)"
+msgstr "(№№ заліковки / варіанту / за списком в журналі / перша літера прізвища)"
+
+#: Comment_notify.module: 512
+msgid "Date readiness order"
+msgstr "Дата готовності замовлення"
+
+#: Comment_notify.module: 512
+msgid "Your educational institution"
+msgstr "Ваш навчальний заклад"
+
+#: Comment_notify.module: 512
+msgid "Your question / message / suggestion"
+msgstr "Ваше запитання / повідомлення / пропозиція"
+
+#: Comment_notify.module: 512
+msgid "The files / attachments / tasks, etc."
+msgstr "Файли / вкладення / завдання та інше"
+
+#: Comment_notify.module: 512
+msgid "(required)"
+msgstr "(обов'язково)"
