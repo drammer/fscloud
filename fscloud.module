@@ -493,18 +493,18 @@ function send_image_cloud($form_state){
 	$form_quest_mess_sugg = $form_state['values']['form_quest_mess_sugg'];
 
 
-	$text ='Заказчик - '.$name.' \n
-	email - '.$email.', контактный телефон - '. $phone . ' \n
-	Тип работы - ' . $select_option . ' \n
-	Тема работы - ' . $theme_work .' \n
-	Дисциплина - ' . $discipline .' \n
-	План работы - ' . $work_plan .' \n
-	Требования к оформлению работы - ' . $for_job_rule .' \n
-	Дополнительная информация - ' . $message .'\n
-	Данные по которым выбирается вариант - ' . $data_which . '\n
-	Дата готовности заказа - ' . $date_read_order .' \n
-	Ваш учебное заведение - ' . $educational_institution .' \n
-	Вопрос / сообщение / предложение - ' . $form_quest_mess_sugg .' \n
+	$text ='Заказчик - '.$name.'
+	email - '.$email.', контактный телефон - '. $phone .'
+	Тип работы - ' . $select_option . '
+	Тема работы - ' . $theme_work .'
+	Дисциплина - ' . $discipline .'
+	План работы - ' . $work_plan .'
+	Требования к оформлению работы - ' . $for_job_rule .'
+	Дополнительная информация - ' . $message .'
+	Данные по которым выбирается вариант - ' . $data_which . '
+	Дата готовности заказа - ' . $date_read_order .'
+	Ваш учебное заведение - ' . $educational_institution .'
+	Вопрос / сообщение / предложение - ' . $form_quest_mess_sugg .'
 	';
 
 	$fid = $form_state["storage"]["file"]->fid;
@@ -539,41 +539,6 @@ function send_image_cloud($form_state){
 
     $newZipFile = $zipname;
 
-//	$dirContent = $diskClient->directoryContents('/');
-//
-//	foreach ($dirContent as $dirItem) {
-//		if ($dirItem['resourceType'] === 'dir') {
-//			if($dirItem['displayName'] == $path){
-//				$path = $path."_new";
-//			}
-//		}
-//
-//	}
-//
-//	$dirContent = $diskClient->createDirectory($path);
-//	if ($dirContent) {
-//
-//			$diskClient->uploadFile(
-//			    '/'. $path .'/',
-//			    array(
-//			        'path' => $zipFile,
-//			        'size' => filesize($zipFile),
-//			        'name' => $newZipFile
-//			    )
-//
-//			);
-//    }
-    //if ($zip->open($zipname) === TRUE) :
-
-
-
-
-
-
-
-
-
-
     $filename = $zipname; //Имя файла для прикрепления
     $to = "bevzenko5@gmail.com"; //Кому
     $from = "zakaz@bagazh-znanij.com"; //От кого
@@ -601,59 +566,40 @@ function send_image_cloud($form_state){
     $body .= "--".$boundary ."--\n";
     mail($to, $subject, $body, $headers); //Отправляем письмо
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//    SEND FILE TO YANDEX DISK
 
         $diskClient = new DiskClient('74a7edf732154c8793b05a64fa400a8c');
         $diskClient->setServiceScheme(DiskClient::HTTPS_SCHEME);
     // Получаем список файлов из директории
     $dirContent = $diskClient->directoryContents('/');
 
-    foreach ($dirContent as $dirItem) {
-        if ($dirItem['resourceType'] === 'dir') {
-            echo 'Директория "' . $dirItem['displayName'] . '" была создана ' . date(
-                    'Y-m-d в H:i:s',
-                    strtotime($dirItem['creationDate'])
-                ) . '<br />';
-        } else {
-            echo 'Файл "' . $dirItem['displayName'] . '" с размером в ' . $dirItem['contentLength'] . ' байт был создан ' . date(
-                    'Y-m-d в H:i:s',
-                    strtotime($dirItem['creationDate'])
-                ) . '<br />';
-        }
-    }
+	foreach ($dirContent as $dirItem) {
+		if ($dirItem['resourceType'] === 'dir') {
+			if($dirItem['displayName'] == $path){
+				$path = $path."_new";
+			}
+		}
 
-    $path = 'Новая папка';
+	}
+
+
     $dirContent = $diskClient->createDirectory($path);
     if ($dirContent) {
-        echo 'Создана новая директория "' . $path . '"!';
+
+
+        $newName = $fileName;
+
+        $diskClient->uploadFile(
+            '/'. $path .'/',
+            array(
+                'path' => $filename,
+                'size' => filesize($filename),
+                'name' => $pathName . '.zip'
+            )
+        );
+
     }
 
-    $fileName = 'manager2.zip';
-    $newName = $fileName;
-
-    $diskClient->uploadFile(
-        '/Новая папка/',
-        array(
-            'path' => $filename,
-            'size' => filesize($filename),
-            'name' => $pathName . '.zip'
-        )
-    );
-    //endif;
 }
 
 // function fscloud_file_delete($fid){
