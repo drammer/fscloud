@@ -452,27 +452,27 @@ function _fscloud_page(){
 		return $page_array;
 }
 
-function fscloud_content($fscloud){
-	//$url = $fscloud['url'];
-	$url = $fscloud['url'];
-
-	libxml_use_internal_errors(true);
-	$fscloud_feed = simplexml_load_file($url);
-	if (!empty($fscloud_feed)) {
-		drupal_set_title($fscloud_feed->channel->title);
-		$page_array = theme('fscloud_content', array('items' => $fscloud_feed));
-
-		return $page_array;
-	} else {
-		$page_array['fscloud_arguments'] = array(
-			'#title'  => t('All posts from the last week'),
-			'#markup' => t('No posts available.'),
-		);
-
-		return $page_array;
-	}
-	
-}
+//function fscloud_content($fscloud){
+//	//$url = $fscloud['url'];
+//	$url = $fscloud['url'];
+//
+//	libxml_use_internal_errors(true);
+//	$fscloud_feed = simplexml_load_file($url);
+//	if (!empty($fscloud_feed)) {
+//		drupal_set_title($fscloud_feed->channel->title);
+//		$page_array = theme('fscloud_content', array('items' => $fscloud_feed));
+//
+//		return $page_array;
+//	} else {
+//		$page_array['fscloud_arguments'] = array(
+//			'#title'  => t('All posts from the last week'),
+//			'#markup' => t('No posts available.'),
+//		);
+//
+//		return $page_array;
+//	}
+//
+//}
 
 
 
@@ -510,86 +510,150 @@ function send_image_cloud($form_state){
 	$fid = $form_state["storage"]["file"]->fid;
 	$file = substr($form_state["storage"]["file"]->uri, 9);
 
+
 	// $diskClient = new DiskClient('d6f7c9bd60d447319cf36e70ead083d2'); investigator
 	//$diskClient = new DiskClient('d454046a08324a268a0daa4607e52a4a'); // anja token
-	 $diskClient = new DiskClient('74a7edf732154c8793b05a64fa400a8c');
-	$diskClient->setServiceScheme(DiskClient::HTTPS_SCHEME);
+
 
 	$path = str_replace(" ", "_", $form_state['values']['name']);
+    $pathName = $path;
+//CREATE READMEname.txt FILE
+
+    $fp = fopen("sites/default/files/README_".$path.".txt", "w");
+    fwrite($fp, $text);
+    fclose($fp);
+
+    $textFile = "sites/default/files/README_".$path.".txt";
+
+    $zip = new ZipArchive();
+    $zipname = 'sites/default/files/' . $pathName . '.zip';
+    if($zip->open($zipname, ZipArchive::CREATE) !== TRUE){
+        exit;
+    }
+    $fileName = 'sites/default/files/images/'.$file;
+
+    $zip->addFile( $textFile , "README_".$path.".txt" );
+    $zip->addFile( $fileName, $file);
+    $zip->close();
 
 
-		$fp = fopen("sites/default/files/README_".$path.".txt", "w");
-		fwrite($fp, $text);
-		fclose($fp);
+    $newZipFile = $zipname;
 
-
-	$dirContent = $diskClient->directoryContents('/');
-
-	foreach ($dirContent as $dirItem) {
-		if ($dirItem['resourceType'] === 'dir') {
-			if($dirItem['displayName'] == $path){
-				$path = $path."_new";
-			} 
-		}
-		
-	}
-
-	
-	$dirContent = $diskClient->createDirectory($path);
-	if ($dirContent) {
-
-			    $fileName = 'sites/default/files/images/'.$file;
-				$readFile = 'sites/default/files/README_'.$path.'.txt';
-				$newName = $file;
-				$newReadFile = $readFile;
-
-			$diskClient->uploadFile(
-			    '/'. $path .'/',
-			    array(
-			        'path' => $fileName,
-			        'size' => filesize($fileName),
-			        'name' => $newName
-			    )
-
-			);
-
-		//	FOR UPLOAD TEXT FILE
-		$diskClient = new DiskClient('74a7edf732154c8793b05a64fa400a8c');
-		$diskClient->setServiceScheme(DiskClient::HTTPS_SCHEME);
-
-		$path = str_replace(" ", "_", $form_state['values']['name']);
-
-
-		$fp = fopen("sites/default/files/README_".$path.".txt", "w");
-		fwrite($fp, $text);
-		fclose($fp);
-
-
-		$dirContent = $diskClient->directoryContents('/'.$path .'/');
-		if ($dirContent) {
-			$readFile = 'sites/default/files/README_' . $path . '.txt';
-
-			$newReadFile = $readFile;
-
-			$diskClient->uploadFile(
-				'/' . $path . '/',
-				array(
-					'path' => $readFile,
-					'size' => filesize($readFile),
-					'name' => $newReadFile
-				)
-			);
-
-					
-	}
-
-	}
+//	$dirContent = $diskClient->directoryContents('/');
+//
+//	foreach ($dirContent as $dirItem) {
+//		if ($dirItem['resourceType'] === 'dir') {
+//			if($dirItem['displayName'] == $path){
+//				$path = $path."_new";
+//			}
+//		}
+//
+//	}
+//
+//	$dirContent = $diskClient->createDirectory($path);
+//	if ($dirContent) {
+//
+//			$diskClient->uploadFile(
+//			    '/'. $path .'/',
+//			    array(
+//			        'path' => $zipFile,
+//			        'size' => filesize($zipFile),
+//			        'name' => $newZipFile
+//			    )
+//
+//			);
+//    }
+    //if ($zip->open($zipname) === TRUE) :
 
 
 
 
 
 
+
+
+
+
+    $filename = $zipname; //Имя файла для прикрепления
+    $to = "bevzenko5@gmail.com"; //Кому
+    $from = "zakaz@bagazh-znanij.com"; //От кого
+    $subject = "Test"; //Тема
+    $message = "Текстовое сообщение"; //Текст письма
+    $boundary = "---"; //Разделитель
+    /* Заголовки */
+    $headers = "From: $from\nReply-To: $from\n";
+    $headers .= "Content-Type: multipart/mixed; boundary=\"$boundary\"";
+    $body = "--$boundary\n";
+    /* Присоединяем текстовое сообщение */
+    $body .= "Content-type: text/html; charset='utf-8'\n";
+    $body .= "Content-Transfer-Encoding: quoted-printablenn";
+    $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
+    $body .= $message."\n";
+    $body .= "--$boundary\n";
+    $file = fopen($filename, "r"); //Открываем файл
+    $text = fread($file, filesize($filename)); //Считываем весь файл
+    fclose($file); //Закрываем файл
+    /* Добавляем тип содержимого, кодируем текст файла и добавляем в тело письма */
+    $body .= "Content-Type: application/octet-stream; name==?utf-8?B?".base64_encode($filename)."?=\n";
+    $body .= "Content-Transfer-Encoding: base64\n";
+    $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
+    $body .= chunk_split(base64_encode($text))."\n";
+    $body .= "--".$boundary ."--\n";
+    mail($to, $subject, $body, $headers); //Отправляем письмо
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        $diskClient = new DiskClient('74a7edf732154c8793b05a64fa400a8c');
+        $diskClient->setServiceScheme(DiskClient::HTTPS_SCHEME);
+    // Получаем список файлов из директории
+    $dirContent = $diskClient->directoryContents('/');
+
+    foreach ($dirContent as $dirItem) {
+        if ($dirItem['resourceType'] === 'dir') {
+            echo 'Директория "' . $dirItem['displayName'] . '" была создана ' . date(
+                    'Y-m-d в H:i:s',
+                    strtotime($dirItem['creationDate'])
+                ) . '<br />';
+        } else {
+            echo 'Файл "' . $dirItem['displayName'] . '" с размером в ' . $dirItem['contentLength'] . ' байт был создан ' . date(
+                    'Y-m-d в H:i:s',
+                    strtotime($dirItem['creationDate'])
+                ) . '<br />';
+        }
+    }
+
+    $path = 'Новая папка';
+    $dirContent = $diskClient->createDirectory($path);
+    if ($dirContent) {
+        echo 'Создана новая директория "' . $path . '"!';
+    }
+
+    $fileName = 'manager2.zip';
+    $newName = $fileName;
+
+    $diskClient->uploadFile(
+        '/Новая папка/',
+        array(
+            'path' => $filename,
+            'size' => filesize($filename),
+            'name' => $pathName . '.zip'
+        )
+    );
+    //endif;
 }
 
 // function fscloud_file_delete($fid){

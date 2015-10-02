@@ -272,11 +272,9 @@ class DiskClient extends AbstractServiceClient
 
     /**
      * @param string $path
-     * @param string $destination
-     * @param string $name
      * @return array
      */
-    public function getFile($path = '', $destination = '', $name = '')
+    public function getFile($path = '')
     {
         $result = array();
         $client = new Client($this->getServiceUrl());
@@ -331,9 +329,11 @@ class DiskClient extends AbstractServiceClient
             $headers = array(
                 'Content-Length' => (string)$file['size']
             );
+
             $finfo = finfo_open(FILEINFO_MIME);
             $mime = finfo_file($finfo, $file['path']);
             $parts = explode(";", $mime);
+            //var_dump($parts);
             $headers['Content-Type'] = $parts[0];
             $headers['Etag'] = md5_file($file['path']);
             $headers['Sha256'] = hash_file('sha256', $file['path']);
