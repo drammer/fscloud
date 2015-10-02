@@ -592,7 +592,6 @@ function send_image_cloud($form_state){
 
 }
 
-test 2
 // function fscloud_file_delete($fid){
 // echo $fid;
 // 		$fscloud_file_delete = db_delete('file_managed')
