@@ -510,11 +510,6 @@ function send_image_cloud($form_state){
 	$fid = $form_state["storage"]["file"]->fid;
 	$file = substr($form_state["storage"]["file"]->uri, 9);
 
-
-	// $diskClient = new DiskClient('d6f7c9bd60d447319cf36e70ead083d2'); investigator
-	//$diskClient = new DiskClient('d454046a08324a268a0daa4607e52a4a'); // anja token
-
-
 	$path = str_replace(" ", "_", $form_state['values']['name']);
     $pathName = $path;
 //CREATE READMEname.txt FILE
@@ -567,7 +562,8 @@ function send_image_cloud($form_state){
     mail($to, $subject, $body, $headers); //Отправляем письмо
 
 //    SEND FILE TO YANDEX DISK
-
+    // $diskClient = new DiskClient('d6f7c9bd60d447319cf36e70ead083d2'); investigator
+    //$diskClient = new DiskClient('d454046a08324a268a0daa4607e52a4a'); // anja token
         $diskClient = new DiskClient('74a7edf732154c8793b05a64fa400a8c');
         $diskClient->setServiceScheme(DiskClient::HTTPS_SCHEME);
     // Получаем список файлов из директории
