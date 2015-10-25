@@ -120,7 +120,7 @@ msgid "Tasks"
 msgstr "Завдання"
 
 #: Comment_notify.module: 512
-msgid "Essays"
+msgid "Essay"
 msgstr "Есе"
 
 #: Comment_notify.module: 512

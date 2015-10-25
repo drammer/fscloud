@@ -4,7 +4,7 @@
 * Bild page and form for File Send
 *
 */ 
-		// Подключаем autoload.php из phar-архива
+		// Подключаем autoload.php
 	require_once 'yandex-php-library/vendor/autoload.php';
 
 	use Yandex\Disk\DiskClient;
@@ -99,15 +99,15 @@ function fscloud_form($form, &$form_state, $cloud = null ){
 				->fields('n', array('id', 'email_admin', 'token'))
 				->execute()->fetchAssoc();
 
-    // $form['add_token'] = array(
-    // 		'#type'	  			=> 'button',
-    // 		'#value'			=> t('Получить токен автоматически'),
-    // 		'#ajax'				=> array(
-    // 				'callback'		=> 'fscloud_js',
-    // 				'method' 		=> 'replace',
-    // 				'effect'		=> 'fade',
-    // 			),
-    // 	);
+     $form['add_token'] = array(
+     		'#type'	  			=> 'button',
+     		'#value'			=> t('Получить токен автоматически'),
+     		'#ajax'				=> array(
+     				'callback'		=> 'fscloud_js',
+     				'method' 		=> 'replace',
+     				'effect'		=> 'fade',
+     			),
+     	);
 
 	$form['token'] = array(
 			'#title'			=> t('Enter the token for the application in Yandex Disk'),
@@ -172,8 +172,8 @@ function page_fscloud_form($form, &$form_state, $cloud = null){
 				'Tests'				=> t('Tests'),
 				'Practice_reports'	=> t('Practice reports'),
 				'Tasks'				=> t('Tasks'),
-				'essay'				=> t('essay'),
-				'articles'			=> t('articles'),
+				'Essay'				=> t('Essay'),
+				'Articles'			=> t('Articles'),
 				),
 			// '#default_value'	=> $category['selected'],
 		);
@@ -475,8 +475,10 @@ function _fscloud_page(){
 //}
 
 
-
 function send_image_cloud($form_state){
+
+	$email = fscloud_form();
+
 
 	$name = $form_state['values']['name'];
 	$email = $form_state['values']['email'];
@@ -535,7 +537,7 @@ function send_image_cloud($form_state){
     $newZipFile = $zipname;
 
     $filename = $zipname; //Имя файла для прикрепления
-    $to = "bevzenko5@gmail.com"; //Кому
+    $to = "".$email['email_admin']['#default_value'].""; //Кому
     $from = "zakaz@bagazh-znanij.com"; //От кого
     $subject = "Test"; //Тема
     $message = "Текстовое сообщение"; //Текст письма
