@@ -276,7 +276,6 @@ function fscloud_block_info()
 		'info'	=> t('Fscloud block'),
 		'cache'	=> DRUPAL_CACHE_PER_ROLE,
 	);
-	$blocks['test'] = "test";
 
 	return $blocks;
 }
