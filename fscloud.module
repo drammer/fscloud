@@ -290,7 +290,7 @@ function fscloud_block_view($delta = ''){
 
 	$block['content'] = drupal_get_form('page_fscloud_form');
 
-		return $block;
+	return $block;
 }
 
 
