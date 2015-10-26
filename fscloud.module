@@ -284,13 +284,13 @@ function fscloud_block_info()
  * Implements hook_block_view().
  */
 function fscloud_block_view($delta = ''){
-	$block = array();
+	$blocks = array();
 
 	//echo $_SERVER['REQUEST_URI'];
 
-	$block['content'] = drupal_get_form('page_fscloud_form');
+	$blocks['content'] = drupal_get_form('page_fscloud_form');
 
-	return $block;
+	return $blocks;
 }
 
 
