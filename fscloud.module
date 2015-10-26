@@ -262,10 +262,38 @@ function page_fscloud_form($form, &$form_state, $cloud = null){
 			'#type'				=>'submit',
 			'#value'			=>t('Send'),
 		);
-		
 
 		return $form;
+
 }
+
+/**
+ * Implements hook_block_info().
+ */
+function fscloud_block_info()
+{
+	$blocks['fscloud_field'] = array(
+		'info'	=> t('Fscloud block'),
+		'cache'	=> DRUPAL_CACHE_PER_ROLE,
+	);
+	$blocks['test'] = "test";
+
+	return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function fscloud_block_view($delta = ''){
+	$block = array();
+
+	//echo $_SERVER['REQUEST_URI'];
+
+	$block['content'] = drupal_get_form('page_fscloud_form');
+
+		return $block;
+}
+
 
 function page_fscloud_form_validate($form, &$form_state){
 	
@@ -298,28 +326,6 @@ function page_fscloud_form_validate($form, &$form_state){
 
 }
 
-function fscloud_form_submit($form, &$form_state){
-
-	$fscloud = array(
-			'email_admin'	=> $form_state['values']['email_admin'],
-			'token'			=> $form_state['values']['token'],
-			'created_at'	=> time(),
-			'updated_at'	=> time(),
-		);
-
-	if(isset($form_state['values']['id'])){
-		$fscloud['id']	= $form_state['values']['id'];
-		drupal_write_record('fscloud_setting', $fscloud, 'id');
-		drupal_set_message(t('Изминения сохраненны'));
-	}
-	else{
-		drupal_write_record('fscloud_setting', $fscloud);
-		drupal_set_message( t('Настройки сохраненны') );
-	}
-
-	drupal_goto('admin/config/content/fscloud/setting');
-}
-
 function page_fscloud_form_submit($form, &$form_state){
 
 
@@ -334,7 +340,7 @@ function page_fscloud_form_submit($form, &$form_state){
 
 	if(isset($form_state['values']['name'])){
 		
-			$fscloud_setting = db_select('fscloud_setting', 'n')
+		$fscloud_setting = db_select('fscloud_setting', 'n')
 				->fields('n', array('id', 'email_admin', 'token'))
 				->execute()->fetchAssoc();
 
@@ -356,10 +362,9 @@ function page_fscloud_form_submit($form, &$form_state){
 	}
 
 
-	drupal_goto('fscloud_feeds');
+	//drupal_goto('fscloud_feeds');
+	drupal_goto(substr($_SERVER['REQUEST_URI'], 3) );
 }
-
-
 
 function fscloud_delete($fscloud){
 
@@ -477,7 +482,7 @@ function _fscloud_page(){
 
 function send_image_cloud($form_state){
 
-	$email = fscloud_form();
+	$email_admin = fscloud_form();
 
 
 	$name = $form_state['values']['name'];
@@ -537,7 +542,7 @@ function send_image_cloud($form_state){
     $newZipFile = $zipname;
 
     $filename = $zipname; //Имя файла для прикрепления
-    $to = "".$email['email_admin']['#default_value'].""; //Кому
+    $to = "".$email_admin['email_admin']['#default_value'].""; //Кому
     $from = "zakaz@bagazh-znanij.com"; //От кого
     $subject = "Test"; //Тема
     $message = "Текстовое сообщение"; //Текст письма
