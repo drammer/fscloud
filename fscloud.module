@@ -114,7 +114,7 @@ function fscloud_form($form, &$form_state, $cloud = null ){
 			'#type' 			=> 'textfield',
 			'#description' 		=> t('To get a token, you must register the application in Yandex API'),
 			'#default_value' 	=> $fscloud_setting ? $fscloud_setting['token'] : '',
-			'#required'			=> true,
+			'#required'			=> false,
 	);
 	$form['email_admin'] = array(
 			'#title'			=> t('Email for sending notifications after receiving reports'),
@@ -166,14 +166,14 @@ function page_fscloud_form($form, &$form_state, $cloud = null){
 			'#title'			=> t('Type of work'),
 			'#type'				=> 'select',
 			'#options'			=> array(
-				'Dissertations' 	=> t('Dissertations'),
-				'Coursework' 		=> t('Coursework'),
-				'Abstracts' 		=> t('Abstracts'),
-				'Tests'				=> t('Tests'),
-				'Practice_reports'	=> t('Practice reports'),
-				'Tasks'				=> t('Tasks'),
-				'Essay'				=> t('Essay'),
-				'Articles'			=> t('Articles'),
+				t('Dissertations') 		=> t('Dissertations'),
+				t('Coursework') 		=> t('Coursework'),
+				t('Abstracts') 			=> t('Abstracts'),
+				t('Tests')				=> t('Tests'),
+				t('Practice reports')	=> t('Practice reports'),
+				t('Tasks')				=> t('Tasks'),
+				t('Essay')				=> t('Essay'),
+				t('Articles')			=> t('Articles'),
 				),
 			// '#default_value'	=> $category['selected'],
 		);
@@ -195,9 +195,9 @@ function page_fscloud_form($form, &$form_state, $cloud = null){
 			'#title'			=> t('Work plan'),
 			'#type'				=> 'select',
 			'#options'			=>array(
-				'available'					=> t('Available'),
-				'no_appoval'				=> t('No and does not require approval'),
-				'yes_appoval'				=> t('No and require approval'),			
+				t('Available')							=> t('Available'),
+				t('No and does not require approval')	=> t('No and does not require approval'),
+				t('No and require approval')			=> t('No and require approval'),
 				),
 			// '#default_value'	=>$category['selected'],
 		);
@@ -217,9 +217,9 @@ function page_fscloud_form($form, &$form_state, $cloud = null){
 		'#title' 			=> t('For job rule'),
 		'#type' 			=> 'select',
 		'#options' 			=> array(
-			'guidelines_client' 								=> t('Customer guidance'),
-			'Overall (for the method. Recom. artist)' 			=> t('Overall (for the method. Recom. artist)'),
-			'special customer requirements' 					=> t('Special customer requirements'),
+			t('Customer guidance') 								=> t('Customer guidance'),
+			t('Overall (for the method. Recom. artist)') 		=> t('Overall (for the method. Recom. artist)'),
+			t('Special customer requirements') 					=> t('Special customer requirements'),
 		),
 	);
 
@@ -272,25 +272,31 @@ function page_fscloud_form($form, &$form_state, $cloud = null){
  */
 function fscloud_block_info()
 {
-	$blocks['fscloud_field'] = array(
-		'info'	=> t('Fscloud block'),
-		'cache'	=> DRUPAL_CACHE_PER_ROLE,
-	);
 
+	$blocks['hello-message'] = array(
+		'info' => t('FScloud'),
+	);
 	return $blocks;
 }
 
 /**
  * Implements hook_block_view().
+ * Генерация заголовка блока и его контента.
  */
-function fscloud_block_view($delta = ''){
-	$blocks = array();
+/**
+ * Implements hook_block_view().
+ */
+function fscloud_block_view($delta = '')
+{
+	$block = array();
 
-	//echo $_SERVER['REQUEST_URI'];
+	if ($delta == 'hello-message') {
+		$block['subject'] = t('Message');
+		$block['content'] = t('Hello World!');
+	}
+	$block['content'] = drupal_get_form('page_fscloud_form');
 
-	$blocks['content'] = drupal_get_form('page_fscloud_form');
-
-	return $blocks;
+	return $block;
 }
 
 
@@ -312,6 +318,7 @@ function page_fscloud_form_validate($form, &$form_state){
     		$form_state['storage']['file'] = $file;
 
      		send_image_cloud($form_state);
+
     
     	}
     	else{
@@ -325,9 +332,40 @@ function page_fscloud_form_validate($form, &$form_state){
 
 }
 
+function fscloud_form_submit($form, &$form_state){
+	$fcloud_field = array(
+		'token'			=> $form_state['values']['token'],
+		'email_admin'	=> $form_state['values']['email_admin'],
+		'created_at'	=> time(),
+		'updated_at'	=> time(),
+	);
+
+	if( ( isset($form_state['values']['token']) ) || (isset($form_state['values']['email_admin'])) ){
+
+		$fscloud_setting = db_select('fscloud_setting', 'n')
+			->fields('n')
+			->execute()
+			->fetchAssoc();
+
+		if( empty($fscloud_setting["id"]) ){
+			drupal_write_record('fscloud_setting', $fcloud_field);
+		}else {
+
+			db_update('fscloud_setting')
+				->fields(array(
+					'token' => $form_state['values']['token'],
+					'email_admin' => $form_state['values']['email_admin'],
+					'created_at' => time(),
+					'updated_at' => time(),
+				))
+				->execute();
+		}
+		drupal_set_message(t('Настройки сохраненны') );
+	}
+
+}
+
 function page_fscloud_form_submit($form, &$form_state){
-
-
 
 	$fcloud_page = array(
 			'name'			=> $form_state['values']['name'],
@@ -338,10 +376,7 @@ function page_fscloud_form_submit($form, &$form_state){
 		);
 
 	if(isset($form_state['values']['name'])){
-		
-		$fscloud_setting = db_select('fscloud_setting', 'n')
-				->fields('n', array('id', 'email_admin', 'token'))
-				->execute()->fetchAssoc();
+
 
 		$url_module = drupal_get_path('module', 'fscloud');
 
@@ -351,9 +386,10 @@ function page_fscloud_form_submit($form, &$form_state){
 
 				db_delete('file_managed')
 				->condition('fid', $fid )
-				->execute(); 	
+				->execute();
 
-		drupal_set_message( t('Спасибо, мы с вами свяжемся'));
+
+		drupal_set_message( t('Thank you, we will contact you'));
 	}
 	else{
 		drupal_write_record('fscloud_messages', $fscloud);
@@ -361,8 +397,7 @@ function page_fscloud_form_submit($form, &$form_state){
 	}
 
 
-	//drupal_goto('fscloud_feeds');
-	drupal_goto(substr($_SERVER['REQUEST_URI'], 3) );
+	drupal_goto( substr( $_SERVER['REQUEST_URI'], 3 ) );
 }
 
 function fscloud_delete($fscloud){
@@ -481,7 +516,10 @@ function _fscloud_page(){
 
 function send_image_cloud($form_state){
 
-	$email_admin = fscloud_form();
+	$setting_admin = db_select('fscloud_setting', 'n')
+		->fields('n')
+		->execute()
+		->fetchAssoc();;
 
 
 	$name = $form_state['values']['name'];
@@ -541,10 +579,10 @@ function send_image_cloud($form_state){
     $newZipFile = $zipname;
 
     $filename = $zipname; //Имя файла для прикрепления
-    $to = "".$email_admin['email_admin']['#default_value'].""; //Кому
+    $to = "".$setting_admin['email_admin'].""; //Кому
     $from = "zakaz@bagazh-znanij.com"; //От кого
-    $subject = "Test"; //Тема
-    $message = "Текстовое сообщение"; //Текст письма
+    $subject = "bagazh-znanij.com"; //Тема
+    $message = "Новый заказ на $select_option"; //Текст письма
     $boundary = "---"; //Разделитель
     /* Заголовки */
     $headers = "From: $from\nReply-To: $from\n";
@@ -570,7 +608,8 @@ function send_image_cloud($form_state){
 //    SEND FILE TO YANDEX DISK
     // $diskClient = new DiskClient('d6f7c9bd60d447319cf36e70ead083d2'); investigator
     //$diskClient = new DiskClient('d454046a08324a268a0daa4607e52a4a'); // anja token
-        $diskClient = new DiskClient('74a7edf732154c8793b05a64fa400a8c');
+//        $diskClient = new DiskClient('74a7edf732154c8793b05a64fa400a8c');
+        $diskClient = new DiskClient($setting_admin['token']);
         $diskClient->setServiceScheme(DiskClient::HTTPS_SCHEME);
     // Получаем список файлов из директории
     $dirContent = $diskClient->directoryContents('/');
@@ -604,15 +643,16 @@ function send_image_cloud($form_state){
 
 }
 
-// function fscloud_file_delete($fid){
+ function fscloud_file_delete($fid){
 // echo $fid;
-// 		$fscloud_file_delete = db_delete('file_managed')
-// 			->condition('fid', $fid );
+ 		$fscloud_file_delete = db_delete('file_managed')
+ 			->condition('fid', $fid );
 
-// 		return $fscloud_file_delete->execute();
-// }
 
-// fscloud_file_delete($fid);
+ 		return $fscloud_file_delete->execute();
+ }
+
+//fscloud_file_delete($fid);
 
 
 

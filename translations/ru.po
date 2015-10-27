@@ -178,3 +178,7 @@ msgstr "Файлы / вложения / задания и прочее"
 #: comment_notify.module:512
 msgid "(required)"
 msgstr "(обязательно)"
+
+#: comment_notify.module:512
+msgid "Thank you, we will contact you"
+msgstr "Спасибо, мы с вами свяжемся"
