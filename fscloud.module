@@ -319,7 +319,7 @@ function page_fscloud_form_validate($form, &$form_state){
 
      		send_image_cloud($form_state);
 
-    
+
     	}
     	else{
     		form_set_error('file', t('Failed to write the uploaded file the site\'s file folder.'));
@@ -328,7 +328,6 @@ function page_fscloud_form_validate($form, &$form_state){
     else{
     	form_set_error('file', t('No file was uploaded.'));
     }
-
 
 }
 
@@ -387,7 +386,6 @@ function page_fscloud_form_submit($form, &$form_state){
 				db_delete('file_managed')
 				->condition('fid', $fid )
 				->execute();
-
 
 		drupal_set_message( t('Thank you, we will contact you'));
 	}
@@ -464,9 +462,6 @@ function fscloud_contents($display){
 
 
 function _fscloud_page(){
-	//drupal_set_title( t('FSCloud ') );
-
-//	$result = fscloud_contents('page')->fetchAll();
 
 	$page_array['token'] = array(
 			'#title'			=> 'Введите токен для приложения в Yandex Disk',
@@ -490,28 +485,6 @@ function _fscloud_page(){
 
 		return $page_array;
 }
-
-//function fscloud_content($fscloud){
-//	//$url = $fscloud['url'];
-//	$url = $fscloud['url'];
-//
-//	libxml_use_internal_errors(true);
-//	$fscloud_feed = simplexml_load_file($url);
-//	if (!empty($fscloud_feed)) {
-//		drupal_set_title($fscloud_feed->channel->title);
-//		$page_array = theme('fscloud_content', array('items' => $fscloud_feed));
-//
-//		return $page_array;
-//	} else {
-//		$page_array['fscloud_arguments'] = array(
-//			'#title'  => t('All posts from the last week'),
-//			'#markup' => t('No posts available.'),
-//		);
-//
-//		return $page_array;
-//	}
-//
-//}
 
 
 function send_image_cloud($form_state){
@@ -627,7 +600,6 @@ function send_image_cloud($form_state){
     $dirContent = $diskClient->createDirectory($path);
     if ($dirContent) {
 
-
         $newName = $fileName;
 
         $diskClient->uploadFile(
@@ -638,6 +610,11 @@ function send_image_cloud($form_state){
                 'name' => $pathName . '.zip'
             )
         );
+
+		unlink('sites/default/files/images/'.$form_state["storage"]["file"]->filename);
+
+		unlink('sites/default/files/'.$pathName . '.zip');
+		unlink('sites/default/files/README_'. $pathName .'.txt');
 
     }
 
