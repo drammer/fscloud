@@ -21,6 +21,14 @@ msgid "FSCloud setting"
 msgstr "Настройки модуля"
 
 #: comment_notify.module:485
+msgid "FSCloud setting token"
+msgstr "Настройки id приложения"
+
+#: comment_notify.module:485
+msgid "Id apps in Yandex Disk"
+msgstr "id приложения зарегистрированного в Yandex"
+
+#: comment_notify.module:485
 msgid "Edit token setting"
 msgstr "Редактировать токен для модуля"
 

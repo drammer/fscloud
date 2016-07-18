@@ -3,43 +3,47 @@
 * @file
 * Bild page and form for File Send
 *
-*/ 
-		// Подключаем autoload.php
+*/
+
+	// Подключаем autoload.php из phar-архива
 	require_once 'yandex-php-library/vendor/autoload.php';
 
-	use Yandex\Disk\DiskClient;
-$fid = null;
+	//use Yandex\Disk\DiskClient;
 
-function fscloud_token(){
-	var_dump($_GET);
-}
+	$fid = null;
 
-function fscloud_menu(){
+	function fscloud_token()
+	{
+		//var_dump($_GET);
+	}
 
-	$items = array();
+	function fscloud_menu()
+	{
 
-	$items['admin/config/content/fscloud'] = array(
-			'title' 				=> 'File Send Cloud',
-			'description'			=> 'Configure the FSCloud',
-			'page callback'			=> 'fscloud_list',
-			'access arguments'		=> array('administer site configuration'),
+		$items = array();
+
+		$items['admin/config/content/fscloud'] = array(
+			'title' => 'File Send Cloud',
+			'description' => 'Configure the FSCloud',
+			'page callback' => 'fscloud_list',
+			'access arguments' => array('administer site configuration'),
 			// 'page arguments'	=> array('fscloud_form'),
 		);
 
-	$items['admin/config/content/fscloud/fcloud_list'] = array(
-			'title' 				=> t('All Message'),
-			'type' 					=> MENU_DEFAULT_LOCAL_TASK,
-			'weight'				=> 1,
+		$items['admin/config/content/fscloud/fcloud_list'] = array(
+			'title' => t('All Message'),
+			'type' => MENU_DEFAULT_LOCAL_TASK,
+			'weight' => 1,
 		);
 
 // add form setting
-	$items['admin/config/content/fscloud/setting'] = array(
-			'title' 			=> t('FSCloud setting'),
-			'page callback'		=> 'drupal_get_form',
-			'page arguments'	=> array('fscloud_form'),
-			'access arguments'  => array('administer site configuration'),
-			'type'				=> MENU_LOCAL_TASK,
-			'weight'			=> 2,
+		$items['admin/config/content/fscloud/setting'] = array(
+			'title' => t('FSCloud setting'),
+			'page callback' => 'drupal_get_form',
+			'page arguments' => array('fscloud_form'),
+			'access arguments' => array('administer site configuration'),
+			'type' => MENU_LOCAL_TASK,
+			'weight' => 2,
 		);
 
 // // add token automat
@@ -53,583 +57,565 @@ function fscloud_menu(){
 // 		);
 
 // add edit setting
-	$items['admin/config/content/fscloud/%cloud/edit'] = array(
-			'title'				=> t('Edit token setting'),
-			'page callback'		=> 'drupal_get_form',
-			'page arguments'	=> array('fscloud_form', 4),
-			'access arguments'	=> array('administer site configuration'),
-			'type'				=> MENU_CALLBACK,
+		$items['admin/config/content/fscloud/%cloud/edit'] = array(
+			'title' => t('Edit token setting'),
+			'page callback' => 'drupal_get_form',
+			'page arguments' => array('fscloud_form', 4),
+			'access arguments' => array('administer site configuration'),
+			'type' => MENU_CALLBACK,
 		);
-	
+
 // rss delete
-    $items['admin/config/content/fscloud/delete'] = array(
-	        'title'            => t('Delete message'),
-	        'page callback'    => 'fscloud_delete',
-	        'page arguments'   => array(5),
-	        'access arguments' => array('administer site configuration'),
-	        'type'             => MENU_CALLBACK,
-    );
-	
-	$items['fscloud_feeds'] = array(
+		$items['admin/config/content/fscloud/delete'] = array(
+			'title' => t('Delete message'),
+			'page callback' => 'fscloud_delete',
+			'page arguments' => array(5),
+			'access arguments' => array('administer site configuration'),
+			'type' => MENU_CALLBACK,
+		);
+
+		$items['fscloud_feeds'] = array(
 			//'title'				=> 'FSCloud feeds',
-			'page callback'		=> 'drupal_get_form',
-			'page arguments'	=> array('page_fscloud_form'),
-			'access arguments'	=> array('access content'),
+			'page callback' => 'drupal_get_form',
+			'page arguments' => array('page_fscloud_form'),
+			'access arguments' => array('access content'),
 		);
 
-	$items['fscloud/%cloud/items'] = array(
-			'title'				=> t('FSCloud content'),
-			'page callback'		=> 'fscloud_content',
-			'page arguments'	=> array(1),
-			'access callback'	=> 	TRUE,
-			'access arguments'	=> array('access content'),
-			'type'				=> MENU_CALLBACK,	
+		$items['fscloud/%cloud/items'] = array(
+			'title' => t('FSCloud content'),
+			'page callback' => 'fscloud_content',
+			'page arguments' => array(1),
+			'access callback' => TRUE,
+			'access arguments' => array('access content'),
+			'type' => MENU_CALLBACK,
 		);
 
-	return $items;
-}
+		return $items;
+	}
 
 // function fscloud_js($form, $form_state){
 // 	var_dump( $form['add_token'] );
 // }
 
-function fscloud_form($form, &$form_state, $cloud = null ){
+	function fscloud_form($form, &$form_state, $cloud = null)
+	{
 
-	$fscloud_setting = db_select('fscloud_setting', 'n')
-				->fields('n', array('id', 'email_admin', 'token'))
-				->execute()->fetchAssoc();
+		$fscloud_setting = db_select('fscloud_setting', 'n')
+			->fields('n', array('id', 'email_admin', 'token'))
+			->execute()->fetchAssoc();
 
-     $form['add_token'] = array(
-     		'#type'	  			=> 'button',
-     		'#value'			=> t('Получить токен автоматически'),
-     		'#ajax'				=> array(
-     				'callback'		=> 'fscloud_js',
-     				'method' 		=> 'replace',
-     				'effect'		=> 'fade',
-     			),
-     	);
+		// $form['add_token'] = array(
+		// 		'#type'	  			=> 'button',
+		// 		'#value'			=> t('Получить токен автоматически'),
+		// 		'#ajax'				=> array(
+		// 				'callback'		=> 'fscloud_js',
+		// 				'method' 		=> 'replace',
+		// 				'effect'		=> 'fade',
+		// 			),
+		// 	);
 
-	$form['token'] = array(
-			'#title'			=> t('Enter the token for the application in Yandex Disk'),
-			'#type' 			=> 'textfield',
-			'#description' 		=> t('To get a token, you must register the application in Yandex API'),
-			'#default_value' 	=> $fscloud_setting ? $fscloud_setting['token'] : '',
-			'#required'			=> false,
-	);
-	$form['email_admin'] = array(
-			'#title'			=> t('Email for sending notifications after receiving reports'),
-			'#description'		=> t('Email for messages added'),
-			'#type'				=> 'textfield',
-			'#default_value'	=> $fscloud_setting ? $fscloud_setting['email_admin'] : '',
-			'#required'			=> false,
-	);
-	$form['submit'] = array(
-			'#type'				=>'submit',
-			'#value'			=>$fscloud_setting ? t('Edit') : t('Save'),
-	);
-	if($fscloud_setting['id']){
-		$form['id'] = array(
-			'#type'			=> 'value',
-			'#value'		=> $fscloud_setting['id'],
-	);
+		$form['token'] = array(
+			'#title' => t('Enter the token for the application in Yandex Disk'),
+			'#type' => 'textfield',
+			'#description' => t('To get a token, you must register the application in Yandex API'),
+			'#default_value' => $fscloud_setting ? $fscloud_setting['token'] : '',
+			'#required' => true,
+		);
+		$form['email_admin'] = array(
+			'#title' => t('Email for sending notifications after receiving reports'),
+			'#description' => t('Email for messages added'),
+			'#type' => 'textfield',
+			'#default_value' => $fscloud_setting ? $fscloud_setting['email_admin'] : '',
+			'#required' => false,
+		);
+		$form['submit'] = array(
+			'#type' => 'submit',
+			'#value' => $fscloud_setting ? t('Edit') : t('Save'),
+		);
+		if ($fscloud_setting['id']) {
+			$form['id'] = array(
+				'#type' => 'value',
+				'#value' => $fscloud_setting['id'],
+			);
+		}
+
+		return $form;
 	}
 
-	return $form;
-}
+	function page_fscloud_form($form, &$form_state, $cloud = null)
+	{
 
-function page_fscloud_form($form, &$form_state, $cloud = null){
-
-	$form['name'] = array(
-			'#title'			=> t('Your name and surname'),
-			'#type' 			=> 'textfield',
+		$form['name'] = array(
+			'#title' => t('Your name and surname'),
+			'#type' => 'textfield',
 //			'#description' 		=> '(required)',
 			// '#default_value' 	=> $fscloud_setting ? $fscloud_setting['token'] : '',
-			'#required'			=> true,
+			'#required' => true,
 		);
 
-	$form['email'] = array(
-			'#title'			=> t('Your email'),
+		$form['email'] = array(
+			'#title' => t('Your email'),
 //			'#description'		=> t('(required)'),
-			'#type'				=> 'textfield',
+			'#type' => 'textfield',
 			// '#default_value'	=> $fscloud_setting ? $fscloud_setting['email_admin'] : '',
-			'#required'			=> true,
+			'#required' => true,
 		);
 
-	$form['phone'] = array(
-			'#title'			=> t('Mobile phone number'),
+		$form['phone'] = array(
+			'#title' => t('Mobile phone number'),
 //			'#description'		=> t('(required)'),
-			'#type'				=> 'textfield',
-			'#required'			=> true,
+			'#type' => 'textfield',
+			'#required' => true,
 		);
 
-	$form['selected'] = array(
-			'#title'			=> t('Type of work'),
-			'#type'				=> 'select',
-			'#options'			=> array(
-				t('Dissertations') 		=> t('Dissertations'),
-				t('Coursework') 		=> t('Coursework'),
-				t('Abstracts') 			=> t('Abstracts'),
-				t('Tests')				=> t('Tests'),
-				t('Practice reports')	=> t('Practice reports'),
-				t('Tasks')				=> t('Tasks'),
-				t('Essay')				=> t('Essay'),
-				t('Articles')			=> t('Articles'),
-				),
+		$form['selected'] = array(
+			'#title' => t('Type of work'),
+			'#type' => 'select',
+			'#options' => array(
+				'Dissertations' => t('Dissertations'),
+				'Coursework' => t('Coursework'),
+				'Abstracts' => t('Abstracts'),
+				'Tests' => t('Tests'),
+				'Practice_reports' => t('Practice reports'),
+				'Tasks' => t('Tasks'),
+				'essay' => t('essay'),
+				'articles' => t('articles'),
+			),
 			// '#default_value'	=> $category['selected'],
 		);
 
-	$form['theme_work']	= array(
-			'#title'			=> t('Theme (Optional)'),
+		$form['theme_work'] = array(
+			'#title' => t('Theme (Optional)'),
 //			'#description'		=> t('(optional)'),
-			'#type'				=> 'textfield',
-			'#required'			=> false,
+			'#type' => 'textfield',
+			'#required' => false,
 		);
 
-	$form['discipline'] = array(
-			'#title'			=> t('Discipline'),
-			'#type'				=> 'textfield',
-			'#required'			=> false,
-		);			
+		$form['discipline'] = array(
+			'#title' => t('Discipline'),
+			'#type' => 'textfield',
+			'#required' => false,
+		);
 
-	$form['work_plan'] = array(
-			'#title'			=> t('Work plan'),
-			'#type'				=> 'select',
-			'#options'			=>array(
-				t('Available')							=> t('Available'),
-				t('No and does not require approval')	=> t('No and does not require approval'),
-				t('No and require approval')			=> t('No and require approval'),
-				),
+		$form['work_plan'] = array(
+			'#title' => t('Work plan'),
+			'#type' => 'select',
+			'#options' => array(
+				'available' => t('Available'),
+				'no_appoval' => t('No and does not require approval'),
+				'yes_appoval' => t('No and require approval'),
+			),
 			// '#default_value'	=>$category['selected'],
 		);
 
-	// $form[]
+		// $form[]
 		//**************!!!! FOR PREV FILE UPLOAD **************//
-	// $form['image_example_image_fid'] = array(
-	// 		'#title'			=> t('image'),
-	// 		'#field_name'		=> 'test2',
-	// 		'#type'				=> 'managed_file',
-	// 		'#description'		=> t('test'),
-	// 		'#default_value'	=> variable_get('image_example_image_fid', ''),
-	// 		'#upload_location'	=> 'public://'
-	// 	);
+		// $form['image_example_image_fid'] = array(
+		// 		'#title'			=> t('image'),
+		// 		'#field_name'		=> 'test2',
+		// 		'#type'				=> 'managed_file',
+		// 		'#description'		=> t('test'),
+		// 		'#default_value'	=> variable_get('image_example_image_fid', ''),
+		// 		'#upload_location'	=> 'public://'
+		// 	);
 
-	$form['for_job_rule'] = array(
-		'#title' 			=> t('For job rule'),
-		'#type' 			=> 'select',
-		'#options' 			=> array(
-			t('Customer guidance') 								=> t('Customer guidance'),
-			t('Overall (for the method. Recom. artist)') 		=> t('Overall (for the method. Recom. artist)'),
-			t('Special customer requirements') 					=> t('Special customer requirements'),
-		),
-	);
-
-	$form['message'] = array(
-			'#title' 			=> t('Additional Information'),
-			'#description'		=> t('(plan, execution, requirements)'),
-			'#type'				=> 'textarea',			
+		$form['for_job_rule'] = array(
+			'#title' => t('For job rule'),
+			'#type' => 'select',
+			'#options' => array(
+				'guidelines_client' => t('Customer guidance'),
+				'Overall (for the method. Recom. artist)' => t('Overall (for the method. Recom. artist)'),
+				'special customer requirements' => t('Special customer requirements'),
+			),
 		);
 
-	$form['data_which'] = array(
-			'#title' 			=> t('The data on which option is selected'),
-			'#description'		=> t('(№№ zachetki / option / on the list in the magazine / first letter of last name)'),
-	  		'#type'				=> 'textfield',
-	);
+		$form['message'] = array(
+			'#title' => t('Additional Information'),
+			'#description' => t('(plan, execution, requirements)'),
+			'#type' => 'textarea',
+		);
 
-	$form['date_read_order'] = array(
-			'#title'			=> t('Date readiness order'),
-			'#type'				=> 'textfield',
-	);
+		$form['data_which'] = array(
+			'#title' => t('The data on which option is selected'),
+			'#description' => t('(№№ zachetki / option / on the list in the magazine / first letter of last name)'),
+			'#type' => 'textfield',
+		);
 
-	$form['educational_institution'] = array(
-			'#title' 			=> t('Your educational institution'),
-			'#type'				=> 'textfield',
-	);
+		$form['date_read_order'] = array(
+			'#title' => t('Date readiness order'),
+			'#type' => 'textfield',
+		);
 
-	$form['form_quest_mess_sugg'] = array(
-			'#title'			=> t('Your question / message / suggestion'),
-			'#type'				=> 'textarea',
-	);
+		$form['educational_institution'] = array(
+			'#title' => t('Your educational institution'),
+			'#type' => 'textfield',
+		);
 
-	$form['new_image']['file']= array(
-			'#type' 			=> 'file',
-			'#title' 			=> t('The files / attachments / tasks, etc.'),
+		$form['form_quest_mess_sugg'] = array(
+			'#title' => t('Your question / message / suggestion'),
+			'#type' => 'textarea',
+		);
+
+		$form['new_image']['file'] = array(
+			'#type' => 'file',
+			'#title' => t('The files / attachments / tasks, etc.'),
 			//'#description' => t('Upload a file, allowed extensions: jpg, jpeg, png, gif'),
-			'#upload_location'	=> 'public://',
-	);
-
-
-	$form['submit'] = array(
-			'#type'				=>'submit',
-			'#value'			=>t('Send'),
+			'#upload_location' => 'public://',
 		);
+
+
+		$form['submit'] = array(
+			'#type' => 'submit',
+			'#value' => t('Send'),
+		);
+
 
 		return $form;
-
-}
-
-/**
- * Implements hook_block_info().
- */
-function fscloud_block_info()
-{
-
-	$blocks['hello-message'] = array(
-		'info' => t('FScloud'),
-	);
-	return $blocks;
-}
-
-/**
- * Implements hook_block_view().
- * Генерация заголовка блока и его контента.
- */
-/**
- * Implements hook_block_view().
- */
-function fscloud_block_view($delta = '')
-{
-	$block = array();
-
-	if ($delta == 'hello-message') {
-		$block['subject'] = t('Message');
-		$block['content'] = t('Hello World!');
 	}
-	$block['content'] = drupal_get_form('page_fscloud_form');
 
-	return $block;
-}
+	function page_fscloud_form_validate($form, &$form_state)
+	{
 
+		$validators = array('file_validate_extensions' => array('jpg jpeg gif png txt doc docx xls pdf ppt pps odt ods odp'));
 
-function page_fscloud_form_validate($form, &$form_state){
-	
-	$validators = array( 'file_validate_extensions' => array('jpg jpeg gif png txt doc docx xls pdf ppt pps odt ods odp') );
+		$file = file_save_upload('file', $validators);
 
-	$file = file_save_upload('file', $validators);
+		// $file = file_save_upload('file', array(
+		//   'file_validate_is_image' => array(), // Validates file is really an image.
+		//   'file_validate_extensions' => array('jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp'), // Validate extensions.
+		//   // 'destination' => 'public"//',
+		//   FILE_EXISTS_REPLACE
+		// ));
 
-    // $file = file_save_upload('file', array(
-    //   'file_validate_is_image' => array(), // Validates file is really an image.
-    //   'file_validate_extensions' => array('jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp'), // Validate extensions.
-    //   // 'destination' => 'public"//',
-    //   FILE_EXISTS_REPLACE
-    // ));
+		if ($file) {
+			if ($file = file_move($file, 'public://')) {
+				$form_state['storage']['file'] = $file;
 
-    if($file){
-    	if($file = file_move($file, 'public://')){
-    		$form_state['storage']['file'] = $file;
+				send_image_cloud($form_state);
 
-     		send_image_cloud($form_state);
-
-
-    	}
-    	else{
-    		form_set_error('file', t('Failed to write the uploaded file the site\'s file folder.'));
-    	}
-    }
-    else{
-    	form_set_error('file', t('No file was uploaded.'));
-    }
-
-}
-
-function fscloud_form_submit($form, &$form_state){
-	$fcloud_field = array(
-		'token'			=> $form_state['values']['token'],
-		'email_admin'	=> $form_state['values']['email_admin'],
-		'created_at'	=> time(),
-		'updated_at'	=> time(),
-	);
-
-	if( ( isset($form_state['values']['token']) ) || (isset($form_state['values']['email_admin'])) ){
-
-		$fscloud_setting = db_select('fscloud_setting', 'n')
-			->fields('n')
-			->execute()
-			->fetchAssoc();
-
-		if( empty($fscloud_setting["id"]) ){
-			drupal_write_record('fscloud_setting', $fcloud_field);
-		}else {
-
-			db_update('fscloud_setting')
-				->fields(array(
-					'token' => $form_state['values']['token'],
-					'email_admin' => $form_state['values']['email_admin'],
-					'created_at' => time(),
-					'updated_at' => time(),
-				))
-				->execute();
+			} else {
+				form_set_error('file', t('Failed to write the uploaded file the site\'s file folder.'));
+			}
+		} else {
+			form_set_error('file', t('No file was uploaded.'));
 		}
-		drupal_set_message(t('Настройки сохраненны') );
+
+
 	}
 
-}
+	function fscloud_form_submit($form, &$form_state)
+	{
 
-function page_fscloud_form_submit($form, &$form_state){
-
-	$fcloud_page = array(
-			'name'			=> $form_state['values']['name'],
-			'email'			=> $form_state['values']['email'],
-			'message'		=> $form_state['values']['message'],
-			'created_at'	=> time(),
-			'updated_at'	=> time(),
+		$fscloud = array(
+			'email_admin' => $form_state['values']['email_admin'],
+			'token' => $form_state['values']['token'],
+			'created_at' => time(),
+			'updated_at' => time(),
 		);
 
-	if(isset($form_state['values']['name'])){
+		if (isset($form_state['values']['id'])) {
+			$fscloud['id'] = $form_state['values']['id'];
+			drupal_write_record('fscloud_setting', $fscloud, 'id');
+			drupal_set_message(t('Изминения сохраненны'));
+		} else {
+			drupal_write_record('fscloud_setting', $fscloud);
+			drupal_set_message(t('Настройки сохраненны'));
+		}
+
+		drupal_goto('admin/config/content/fscloud/setting');
+	}
+
+	function page_fscloud_form_submit($form, &$form_state)
+	{
 
 
-		$url_module = drupal_get_path('module', 'fscloud');
+		$fcloud_page = array(
+			'name' => $form_state['values']['name'],
+			'email' => $form_state['values']['email'],
+			'message' => $form_state['values']['message'],
+			'created_at' => time(),
+			'updated_at' => time(),
+		);
 
-		drupal_write_record('fscloud_messages', $fcloud_page);	
+		if (isset($form_state['values']['name'])) {
 
-			    $fid = $form_state["storage"]["file"]->fid;
+			$fscloud_setting = db_select('fscloud_setting', 'n')
+				->fields('n', array('id', 'email_admin', 'token'))
+				->execute()->fetchAssoc();
 
-				db_delete('file_managed')
-				->condition('fid', $fid )
+			$url_module = drupal_get_path('module', 'fscloud');
+
+			drupal_write_record('fscloud_messages', $fcloud_page);
+
+			$fid = $form_state["storage"]["file"]->fid;
+
+			db_delete('file_managed')
+				->condition('fid', $fid)
 				->execute();
 
-		drupal_set_message( t('Thank you, we will contact you'));
+			drupal_set_message(t('Спасибо, мы с вами свяжемся'));
+		} else {
+			drupal_write_record('fscloud_messages', $fscloud);
+			// drupal_set_message( t('Настройки сохраненны') );
+		}
+
+
+		drupal_goto('fscloud_feeds');
 	}
-	else{
-		drupal_write_record('fscloud_messages', $fscloud);
-		// drupal_set_message( t('Настройки сохраненны') );
-	}
 
 
-	drupal_goto( substr( $_SERVER['REQUEST_URI'], 3 ) );
-}
+	function fscloud_delete($fscloud)
+	{
 
-function fscloud_delete($fscloud){
+		$fscloud_delete = db_delete('fscloud_messages')
+			->condition('id', $fscloud)
+			->execute();
 
-	$fscloud_delete = db_delete('fscloud_messages')
-					->condition('id', $fscloud)
-					->execute();
 
-					
-		drupal_set_message( t('FSCloud deleted') );
+		drupal_set_message(t('FSCloud deleted'));
 		drupal_goto('admin/config/content/fscloud');
 
-	return $fscloud_delete;
-}
+		return $fscloud_delete;
+	}
 
 
 // for message
 
-function fscloud_list(){
-	$header = array(
+	function fscloud_list()
+	{
+		$header = array(
 			array('data' => t('Name')),
 			array('data' => t('Email')),
 			array('data' => t('Message')),
 			array('data' => t('Action'))
 		);
-	$fscloud = db_select('fscloud_messages', 'n')
-				->fields('n', array('id', 'name', 'email', 'message'))
-				->execute()->fetchAll();
-	$row = array();
+		$fscloud = db_select('fscloud_messages', 'n')
+			->fields('n', array('id', 'name', 'email', 'message'))
+			->execute()->fetchAll();
+		$row = array();
 
-	if($fscloud) {
-		foreach ($fscloud as $fscloud_feed) {
-			$actions = array(
+		if ($fscloud) {
+			foreach ($fscloud as $fscloud_feed) {
+				$actions = array(
 					//l(t('edit'), 'admin/config/content/fscloud_feeds/' . $fscloud_feed->id . '/edit'),
-					l(t('delete'), 'admin/config/content/fscloud/delete/'. $fscloud_feed->id ),
+					l(t('delete'), 'admin/config/content/fscloud/delete/' . $fscloud_feed->id),
 				);
 
-			$row[] = array(
+				$row[] = array(
 					array('data' => $fscloud_feed->name),
 					array('data' => $fscloud_feed->email),
 					array('data' => $fscloud_feed->message),
-					array('data' => implode(' | ', $actions )),
+					array('data' => implode(' | ', $actions)),
 				);
-		}
-	}
-
-	return theme('table', array(
-			'header'	=> $header,
-			'rows' 		=> $row,
-		));
-}
-
-function fscloud_contents($display){
-	$query = db_select('fscloud', 'n')
-			->fields('n', array('id', 'name', 'url', 'token'))
-			->orderBy('created_at', 'DESC');
-
-		if( $display == 'block'){
-			$query->range(0, 5);
-		}
-
-	return $query->execute();
-}
-
-
-function _fscloud_page(){
-
-	$page_array['token'] = array(
-			'#title'			=> 'Введите токен для приложения в Yandex Disk',
-			'#type' 			=> 'textfield',
-			'#description' 		=> 'Чтобы получить токен нужно зарегистрировать приложение в Yandex API',
-			// '#default_value' 	=> $fscloud_setting ? $fscloud_setting['token'] : '',
-			'#required'			=> true,
-	);
-	$page_array['email_admin'] = array(
-			'#title'			=> t('Email для отправки уведомлений после полученных сообщений'),
-			'#description'		=> t('Email для сообщений добавлен'),
-			'#type'				=> 'textfield',
-			// '#default_value'	=> $fscloud_setting ? $fscloud_setting['email_admin'] : '',
-			'#required'			=> false,
-	);
-	$page_array['submit'] = array(
-			'#type'				=>'submit',
-			'#value'			=>t('Send'),
-	);
-		
-
-		return $page_array;
-}
-
-
-function send_image_cloud($form_state){
-
-	$setting_admin = db_select('fscloud_setting', 'n')
-		->fields('n')
-		->execute()
-		->fetchAssoc();;
-
-
-	$name = $form_state['values']['name'];
-	$email = $form_state['values']['email'];
-	$phone = $form_state['values']['phone'];
-	$select_option = $form_state['values']['selected'];
-	$theme_work = $form_state['values']['theme_work'];
-	$discipline = $form_state['values']['discipline'];
-	$work_plan = $form_state['values']['work_plan'];
-	$for_job_rule = $form_state['values']['for_job_rule'];
-	$message = $form_state['values']['message'];
-	$data_which = $form_state['values']['data_which'];
-	$date_read_order = $form_state['values']['date_read_order'];
-	$educational_institution = $form_state['values']['educational_institution'];
-	$form_quest_mess_sugg = $form_state['values']['form_quest_mess_sugg'];
-
-
-	$text ='Заказчик - '.$name.'
-	email - '.$email.', контактный телефон - '. $phone .'
-	Тип работы - ' . $select_option . '
-	Тема работы - ' . $theme_work .'
-	Дисциплина - ' . $discipline .'
-	План работы - ' . $work_plan .'
-	Требования к оформлению работы - ' . $for_job_rule .'
-	Дополнительная информация - ' . $message .'
-	Данные по которым выбирается вариант - ' . $data_which . '
-	Дата готовности заказа - ' . $date_read_order .'
-	Ваш учебное заведение - ' . $educational_institution .'
-	Вопрос / сообщение / предложение - ' . $form_quest_mess_sugg .'
-	';
-
-	$fid = $form_state["storage"]["file"]->fid;
-	$file = substr($form_state["storage"]["file"]->uri, 9);
-
-	$path = str_replace(" ", "_", $form_state['values']['name']);
-    $pathName = $path;
-//CREATE READMEname.txt FILE
-
-    $fp = fopen("sites/default/files/README_".$path.".txt", "w");
-    fwrite($fp, $text);
-    fclose($fp);
-
-    $textFile = "sites/default/files/README_".$path.".txt";
-
-    $zip = new ZipArchive();
-    $zipname = 'sites/default/files/' . $pathName . '.zip';
-    if($zip->open($zipname, ZipArchive::CREATE) !== TRUE){
-        exit;
-    }
-    $fileName = 'sites/default/files/images/'.$file;
-
-    $zip->addFile( $textFile , "README_".$path.".txt" );
-    $zip->addFile( $fileName, $file);
-    $zip->close();
-
-
-    $newZipFile = $zipname;
-
-    $filename = $zipname; //Имя файла для прикрепления
-    $to = "".$setting_admin['email_admin'].""; //Кому
-    $from = "zakaz@bagazh-znanij.com"; //От кого
-    $subject = "bagazh-znanij.com"; //Тема
-    $message = "Новый заказ на $select_option"; //Текст письма
-    $boundary = "---"; //Разделитель
-    /* Заголовки */
-    $headers = "From: $from\nReply-To: $from\n";
-    $headers .= "Content-Type: multipart/mixed; boundary=\"$boundary\"";
-    $body = "--$boundary\n";
-    /* Присоединяем текстовое сообщение */
-    $body .= "Content-type: text/html; charset='utf-8'\n";
-    $body .= "Content-Transfer-Encoding: quoted-printablenn";
-    $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
-    $body .= $message."\n";
-    $body .= "--$boundary\n";
-    $file = fopen($filename, "r"); //Открываем файл
-    $text = fread($file, filesize($filename)); //Считываем весь файл
-    fclose($file); //Закрываем файл
-    /* Добавляем тип содержимого, кодируем текст файла и добавляем в тело письма */
-    $body .= "Content-Type: application/octet-stream; name==?utf-8?B?".base64_encode($filename)."?=\n";
-    $body .= "Content-Transfer-Encoding: base64\n";
-    $body .= "Content-Disposition: attachment; filename==?utf-8?B?".base64_encode($filename)."?=\n\n";
-    $body .= chunk_split(base64_encode($text))."\n";
-    $body .= "--".$boundary ."--\n";
-    mail($to, $subject, $body, $headers); //Отправляем письмо
-
-//    SEND FILE TO YANDEX DISK
-    // $diskClient = new DiskClient('d6f7c9bd60d447319cf36e70ead083d2'); investigator
-    //$diskClient = new DiskClient('d454046a08324a268a0daa4607e52a4a'); // anja token
-//        $diskClient = new DiskClient('74a7edf732154c8793b05a64fa400a8c');
-        $diskClient = new DiskClient($setting_admin['token']);
-        $diskClient->setServiceScheme(DiskClient::HTTPS_SCHEME);
-    // Получаем список файлов из директории
-    $dirContent = $diskClient->directoryContents('/');
-
-	foreach ($dirContent as $dirItem) {
-		if ($dirItem['resourceType'] === 'dir') {
-			if($dirItem['displayName'] == $path){
-				$path = $path."_new";
 			}
 		}
 
+		return theme('table', array(
+			'header' => $header,
+			'rows' => $row,
+		));
+	}
+
+	function fscloud_contents($display)
+	{
+		$query = db_select('fscloud', 'n')
+			->fields('n', array('id', 'name', 'url', 'token'))
+			->orderBy('created_at', 'DESC');
+
+		if ($display == 'block') {
+			$query->range(0, 5);
+		}
+
+		return $query->execute();
 	}
 
 
-    $dirContent = $diskClient->createDirectory($path);
-    if ($dirContent) {
+	function _fscloud_page()
+	{
+		//drupal_set_title( t('FSCloud ') );
 
-        $newName = $fileName;
+//	$result = fscloud_contents('page')->fetchAll();
 
-        $diskClient->uploadFile(
-            '/'. $path .'/',
-            array(
-                'path' => $filename,
-                'size' => filesize($filename),
-                'name' => $pathName . '.zip'
-            )
-        );
+		$page_array['token'] = array(
+			'#title' => 'Введите токен для приложения в Yandex Disk',
+			'#type' => 'textfield',
+			'#description' => 'Чтобы получить токен нужно зарегистрировать приложение в Yandex API',
+			// '#default_value' 	=> $fscloud_setting ? $fscloud_setting['token'] : '',
+			'#required' => true,
+		);
+		$page_array['email_admin'] = array(
+			'#title' => t('Email для отправки уведомлений после полученных сообщений'),
+			'#description' => t('Email для сообщений добавлен'),
+			'#type' => 'textfield',
+			// '#default_value'	=> $fscloud_setting ? $fscloud_setting['email_admin'] : '',
+			'#required' => false,
+		);
+		$page_array['submit'] = array(
+			'#type' => 'submit',
+			'#value' => t('Send'),
+		);
 
-		unlink('sites/default/files/images/'.$form_state["storage"]["file"]->filename);
 
-		unlink('sites/default/files/'.$pathName . '.zip');
-		unlink('sites/default/files/README_'. $pathName .'.txt');
+		return $page_array;
+	}
 
-    }
+//function fscloud_content($fscloud){
+//	//$url = $fscloud['url'];
+//	$url = $fscloud['url'];
+//
+//	libxml_use_internal_errors(true);
+//	$fscloud_feed = simplexml_load_file($url);
+//	if (!empty($fscloud_feed)) {
+//		drupal_set_title($fscloud_feed->channel->title);
+//		$page_array = theme('fscloud_content', array('items' => $fscloud_feed));
+//
+//		return $page_array;
+//	} else {
+//		$page_array['fscloud_arguments'] = array(
+//			'#title'  => t('All posts from the last week'),
+//			'#markup' => t('No posts available.'),
+//		);
+//
+//		return $page_array;
+//	}
+//
+//}
 
-}
 
- function fscloud_file_delete($fid){
+	function send_image_cloud($form_state)
+	{
+		if (!empty($form_state)) {
+
+			$name = $form_state['values']['name'];
+			$email = $form_state['values']['email'];
+			$phone = $form_state['values']['phone'];
+			$select_option = $form_state['values']['selected'];
+			$theme_work = $form_state['values']['theme_work'];
+			$discipline = $form_state['values']['discipline'];
+			$work_plan = $form_state['values']['work_plan'];
+			$for_job_rule = $form_state['values']['for_job_rule'];
+			$message = $form_state['values']['message'];
+			$data_which = $form_state['values']['data_which'];
+			$date_read_order = $form_state['values']['date_read_order'];
+			$educational_institution = $form_state['values']['educational_institution'];
+			$form_quest_mess_sugg = $form_state['values']['form_quest_mess_sugg'];
+
+
+			$text = 'Заказчик - ' . $name . '
+	email - ' . $email . ', контактный телефон - ' . $phone . '
+	Тип работы - ' . $select_option . '
+	Тема работы - ' . $theme_work . '
+	Дисциплина - ' . $discipline . '
+	План работы - ' . $work_plan . '
+	Требования к оформлению работы - ' . $for_job_rule . '
+	Дополнительная информация - ' . $message . '
+	Данные по которым выбирается вариант - ' . $data_which . '
+	Дата готовности заказа - ' . $date_read_order . '
+	Ваш учебное заведение - ' . $educational_institution . '
+	Вопрос / сообщение / предложение - ' . $form_quest_mess_sugg . '
+	';
+
+			$fid = $form_state["storage"]["file"]->fid;
+			$file = substr($form_state["storage"]["file"]->uri, 9);
+
+			$path = str_replace(" ", "_", $form_state['values']['name']);
+			$pathName = $path;
+//CREATE READMEname.txt FILE
+
+			$fp = fopen("sites/default/files/README_" . $path . ".txt", "w");
+			fwrite($fp, $text);
+			fclose($fp);
+
+			$textFile = "sites/default/files/README_" . $path . ".txt";
+
+			$zip = new ZipArchive();
+			$zipname = 'sites/default/files/' . $pathName . '.zip';
+			if ($zip->open($zipname, ZipArchive::CREATE) !== TRUE) {
+				exit;
+			}
+			$fileName = 'sites/default/files/images/' . $file;
+
+			$zip->addFile($textFile, "README_" . $path . ".txt");
+			$zip->addFile($fileName, $file);
+			$zip->close();
+
+
+			$newZipFile = $zipname;
+
+			$filename = $zipname; //Имя файла для прикрепления
+			$to = "bevzenko5@gmail.com"; //Кому
+			$from = "zakaz@bagazh-znanij.com"; //От кого
+			$subject = "Test"; //Тема
+			$message = "Текстовое сообщение"; //Текст письма
+			$boundary = "---"; //Разделитель
+			/* Заголовки */
+			$headers = "From: $from\nReply-To: $from\n";
+			$headers .= "Content-Type: multipart/mixed; boundary=\"$boundary\"";
+			$body = "--$boundary\n";
+			/* Присоединяем текстовое сообщение */
+			$body .= "Content-type: text/html; charset='utf-8'\n";
+			$body .= "Content-Transfer-Encoding: quoted-printablenn";
+			$body .= "Content-Disposition: attachment; filename==?utf-8?B?" . base64_encode($filename) . "?=\n\n";
+			$body .= $message . "\n";
+			$body .= "--$boundary\n";
+			$file = fopen($filename, "r"); //Открываем файл
+			$text = fread($file, filesize($filename)); //Считываем весь файл
+			fclose($file); //Закрываем файл
+			/* Добавляем тип содержимого, кодируем текст файла и добавляем в тело письма */
+			$body .= "Content-Type: application/octet-stream; name==?utf-8?B?" . base64_encode($filename) . "?=\n";
+			$body .= "Content-Transfer-Encoding: base64\n";
+			$body .= "Content-Disposition: attachment; filename==?utf-8?B?" . base64_encode($filename) . "?=\n\n";
+			$body .= chunk_split(base64_encode($text)) . "\n";
+			$body .= "--" . $boundary . "--\n";
+			mail($to, $subject, $body, $headers); //Отправляем письмо
+
+//    SEND FILE TO YANDEX DISK
+			// $diskClient = new DiskClient('d6f7c9bd60d447319cf36e70ead083d2'); investigator
+			//$diskClient = new DiskClient('d454046a08324a268a0daa4607e52a4a'); // anja token
+			$diskClient = new DiskClient('74a7edf732154c8793b05a64fa400a8c');
+			$diskClient->setServiceScheme(DiskClient::HTTPS_SCHEME);
+			// Получаем список файлов из директории
+			$dirContent = $diskClient->directoryContents('/');
+
+			foreach ($dirContent as $dirItem) {
+				if ($dirItem['resourceType'] === 'dir') {
+					if ($dirItem['displayName'] == $path) {
+						$path = $path . "_new";
+					}
+				}
+
+			}
+
+
+			$dirContent = $diskClient->createDirectory($path);
+			if ($dirContent) {
+
+
+				$newName = $fileName;
+
+				$diskClient->uploadFile(
+					'/' . $path . '/',
+					array(
+						'path' => $filename,
+						'size' => filesize($filename),
+						'name' => $pathName . '.zip'
+					)
+				);
+
+			}
+
+		}
+	}
+
+// function fscloud_file_delete($fid){
 // echo $fid;
- 		$fscloud_file_delete = db_delete('file_managed')
- 			->condition('fid', $fid );
+// 		$fscloud_file_delete = db_delete('file_managed')
+// 			->condition('fid', $fid );
 
+// 		return $fscloud_file_delete->execute();
+// }
 
- 		return $fscloud_file_delete->execute();
- }
-
-//fscloud_file_delete($fid);
+// fscloud_file_delete($fid);
 
 
 

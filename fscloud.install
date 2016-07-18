@@ -9,7 +9,17 @@ function fscloud_schema(){
 			'fields'	=>array(
 			'id'			=> array('type' => 'serial', 'size' => 'normal', 'not_null' => TRUE ),
 			'email_admin'	=> array('type'	=> 'varchar', 'length'	=> 255, 'not_null' => TRUE),
+			'created_at'	=> array('type' => 'int', 'not null' => TRUE),
+			'updated_at'	=> array('type' => 'int', 'not null' => TRUE),
+			),
+			'unique keys' => array('id' => array('id')),
+			'primary_key' => array('id'),
+		);
+	$schema['fscloud_setting_token'] = array(
+			'fields'	=>array(
+			'id'			=> array('type' => 'serial', 'size' => 'normal', 'not_null' => TRUE ),
 			'token'			=> array('type'	=> 'varchar', 'length' =>255, 'not_null' => TRUE),
+			'id_apps'		=> array('type'	=> 'varchar', 'length' =>255, 'not_null' => TRUE),
 			'created_at'	=> array('type' => 'int', 'not null' => TRUE),
 			'updated_at'	=> array('type' => 'int', 'not null' => TRUE),
 			),
