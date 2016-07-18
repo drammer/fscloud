@@ -484,7 +484,7 @@
 
 	function send_image_cloud($form_state)
 	{
-		if (!empty($form_state)) {
+		if (isset($form_state)) {
 
 			$name = $form_state['values']['name'];
 			$email = $form_state['values']['email'];
